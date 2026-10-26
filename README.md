@@ -8,8 +8,8 @@ Aura is a macOS screen saver with an animated gradient clock and 16 color themes
 
 ## Preview
 
-| Pink Orchid | Aqua | Dark appearance |
-| --- | --- | --- |
+| Pink Orchid | Aqua |
+| --- | --- |
 | ![Pink Orchid theme](assets/preview-orchid.jpg) | ![Aqua theme](assets/preview-aqua.jpg) |
 ## Download and install
 
