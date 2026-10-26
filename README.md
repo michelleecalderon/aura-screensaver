@@ -14,7 +14,7 @@ Aura is a macOS screen saver with an animated gradient clock and 16 color themes
 
 ## Download and install
 
-1. Download **Aura-Screensaver.zip** from [GitHub Releases](https://github.com/michelleecalderon/aura-screensaver/releases/latest).
+1. Download [Aura-Screensaver.zip](https://github.com/michelleecalderon/aura-screensaver/releases/latest/download/Aura-Screensaver.zip) ([release notes](https://github.com/michelleecalderon/aura-screensaver/releases/latest)).
 2. Unzip it, then double-click `aura.saver`.
 3. Choose **Install for this user only**.
 4. Open **System Settings → Screen Saver** and select **Aura**.
