@@ -1,31 +1,29 @@
 # Aura
 
-Aura is a macOS screen saver with an animated gradient clock. It cycles through 16 color themes, with options to choose a theme or hide the clock.
+Aura is a macOS screen saver with an animated gradient clock and 16 color themes.
 
 ![Aura screen saver](assets/aura-cover.jpg)
 
-[Watch the 60-second demo](assets/aura-demo.mp4).
+[Explore all 16 themes in the interactive demo](https://michelleecalderon.github.io/aura-screensaver/) · [Watch the 60-second video](assets/aura-demo.mp4)
 
 ## Preview
 
-| Orchid | Aqua | Blue theme |
+| Pink Orchid | Aqua | Dark Denim |
 | --- | --- | --- |
-| ![Orchid theme](assets/preview-orchid.jpg) | ![Aqua theme](assets/preview-aqua.jpg) | ![Blue theme](assets/preview-dark-appearance.jpg) |
+| ![Pink Orchid theme](assets/preview-orchid.jpg) | ![Aqua theme](assets/preview-aqua.jpg) | ![Dark Denim theme](assets/preview-dark-appearance.jpg) |
 
-## Get Aura for free
+## Download and install
 
-This repository includes the source code. To install Aura:
-
-1. Download the repository and open `aura.xcodeproj` in Xcode on a Mac.
-2. Select the `aura` scheme and build the `aura.saver` product.
-3. Double-click the built `aura.saver` and choose **Install for this user only**.
+1. Download **Aura-Screensaver.zip** from [GitHub Releases](https://github.com/michelleecalderon/aura-screensaver/releases/latest).
+2. Unzip it, then double-click `aura.saver`.
+3. Choose **Install for this user only**.
 4. Open **System Settings → Screen Saver** and select **Aura**.
 
-The project currently targets macOS 26.2. The build is not notarized, so macOS may show a security warning.
+**Compatibility:** the included installer requires macOS 26.2 or later and an Apple Silicon Mac. It is not notarized by Apple, so macOS may show a security warning. Only install it if you trust the download.
 
-## Downloads
+## Build from source
 
-GitHub Releases do not currently include a prebuilt installer. The free download here is the source code; build it with Xcode using the steps above.
+Open `aura.xcodeproj` in Xcode on a Mac, select the `aura` scheme, and build the `aura.saver` product. Double-click the built screen saver to install it.
 
 ## License
 

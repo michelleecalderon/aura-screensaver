@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aura — Screensaver Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 100vw; height: 100vh; overflow: hidden; background: #000; cursor: none; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+  .clock-wrap {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; pointer-events: none;
+  }
+  .time {
+    font-family: 'Outfit', sans-serif; font-weight: 700;
+    font-size: clamp(80px, 13vw, 180px);
+    color: rgba(255,255,255,0.92); letter-spacing: 0.01em; line-height: 1;
+  }
+  .date {
+    font-family: 'Instrument Serif', serif; font-style: italic;
+    font-size: clamp(14px, 1.5vw, 22px);
+    color: rgba(255,255,255,0.50); letter-spacing: 0.25em;
+  }
+  .site-mark {
+    position: fixed; top: 20px; left: 24px; z-index: 2;
+    color: rgba(255,255,255,0.78); text-decoration: none;
+    font: 700 11px 'Outfit', sans-serif; letter-spacing: 0.14em;
+  }
+  .site-mark span { color: rgba(255,255,255,0.48); font-weight: 400; }
+  .site-mark:hover { color: #fff; }
+  .ui {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; gap: 8px; align-items: center; cursor: auto;
+    background: rgba(0,0,0,0.48); backdrop-filter: blur(12px);
+    border-radius: 18px; padding: 12px 16px;
+    border: 1px solid rgba(255,255,255,0.16); max-width: calc(100vw - 32px);
+  }
+  .ui-label {
+    font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700;
+    color: rgba(255,255,255,0.65); letter-spacing: 0.12em;
+  }
+  .theme-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 900px; }
+  .theme-button {
+    display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px;
+    border-radius: 999px; border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.78);
+    font: 12px 'Outfit', sans-serif; cursor: pointer; white-space: nowrap;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .theme-button:hover { background: rgba(255,255,255,0.16); transform: translateY(-1px); }
+  .theme-button.active { color: #fff; border-color: rgba(255,255,255,0.72); background: rgba(255,255,255,0.18); }
+  .swatch { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+  @media (max-width: 600px) {
+    .site-mark {
+    position: fixed; top: 20px; left: 24px; z-index: 2;
+    color: rgba(255,255,255,0.78); text-decoration: none;
+    font: 700 11px 'Outfit', sans-serif; letter-spacing: 0.14em;
+  }
+  .site-mark span { color: rgba(255,255,255,0.48); font-weight: 400; }
+  .site-mark:hover { color: #fff; }
+  .ui { bottom: 8px; padding: 8px; max-height: 38vh; overflow: auto; }
+    .theme-list { gap: 4px; }
+    .theme-button { font-size: 11px; padding: 5px 7px; }
+    .time { font-size: clamp(54px, 16vw, 100px); }
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<a class="site-mark" href="https://github.com/michelleecalderon/aura-screensaver">AURA <span>· 16 THEMES · SOURCE ON GITHUB</span></a>
+<div class="clock-wrap">
+  <div class="time" id="time">12:00</div>
+  <div class="date" id="date">saturday · april 11</div>
+</div>
+<div class="ui" aria-label="Choose a color theme"><span class="ui-label">CHOOSE A THEME</span><div class="theme-list" id="theme-list"></div></div>
+<script>
+const themes = [
+  { name: "Pink Orchid",    colors: ["#160009","#980098","#ffd2fb"] },
+  { name: "Blues",          colors: ["#040035","#38a5ff","#28ffe5"] },
+  { name: "Nebula",         colors: ["#1f003b","#7a00b4","#feb1ff"] },
+  { name: "Aqua",           colors: ["#001f25","#007f81","#1eded1"] },
+  { name: "Magma",          colors: ["#480c00","#ff4200","#ffa95f"] },
+  { name: "Matcha",         colors: ["#002f04","#70892e","#c6e99f"] },
+  { name: "Coffee",         colors: ["#260f05","#552c1b","#cdb49e"] },
+  { name: "Citrus",         colors: ["#2f6c02","#c3f105","#fffb9e"] },
+  { name: "Electric Lilac", colors: ["#310687","#aa61fe","#bbf8f1"] },
+  { name: "Blush Bloom",    colors: ["#ba057f","#f66bf7","#c7eefc"] },
+  { name: "Lunar Indigo",   colors: ["#12145f","#32649e","#f9ddc6"] },
+  { name: "Dark Sun",       colors: ["#130600","#ab562f","#ffdc75"] },
+  { name: "Dark Night",     colors: ["#02000e","#000456","#6b7389"] },
+  { name: "Dark Grey",      colors: ["#000000","#464646","#cccccc"] },
+  { name: "Dark Denim",     colors: ["#011b2a","#1b5175","#7aaabf"] },
+  { name: "Cosmic",         colors: null },
+];
+
+function hexToRgb(hex) {
+  return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
+}
+function lerpColor(a, b, t) {
+  return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];
+}
+function hslToRgb(h, s, l) {
+  s/=100; l/=100;
+  const k=n=>(n+h/30)%12, a=s*Math.min(l,1-l);
+  const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+  return [Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)];
+}
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+let currentTheme = Math.floor(Math.random() * themes.length);
+let nextTheme    = (currentTheme + 1) % themes.length;
+let progress = 1, transitioning = false, transStart = 0;
+const transDur = 8000, holdDur = 20000;
+let lastHold = performance.now();
+let t = 0;
+
+// Build named theme controls
+const themeList = document.getElementById('theme-list');
+themes.forEach((th, i) => {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'theme-button' + (i === currentTheme ? ' active' : '');
+  button.setAttribute('aria-pressed', String(i === currentTheme));
+  const swatch = document.createElement('span');
+  swatch.className = 'swatch';
+  swatch.setAttribute('aria-hidden', 'true');
+  swatch.style.background = th.colors ? th.colors[1] : 'conic-gradient(red,yellow,lime,cyan,blue,magenta,red)';
+  const label = document.createElement('span');
+  label.textContent = th.name;
+  button.append(swatch, label);
+  button.addEventListener('click', () => {
+    currentTheme = nextTheme = i;
+    progress = 1; transitioning = false; lastHold = performance.now();
+    themeList.querySelectorAll('.theme-button').forEach((item, j) => {
+      item.classList.toggle('active', j === i);
+      item.setAttribute('aria-pressed', String(j === i));
+    });
+  });
+  themeList.appendChild(button);
+});
+
+function getCosmicColors(t) {
+  const hue = (t * 0.05) % 360;
+  return [hslToRgb(hue,95,12), hslToRgb((hue+28)%360,90,45), hslToRgb((hue+65)%360,60,78)];
+}
+function getThemeColors(idx, t) {
+  const th = themes[idx];
+  return th.colors ? th.colors.map(hexToRgb) : getCosmicColors(t);
+}
+
+function drawBlob(cx, cy, radius, centerCol, midCol, alpha) {
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+  grad.addColorStop(0,    `rgba(${centerCol[0]},${centerCol[1]},${centerCol[2]},${alpha})`);
+  grad.addColorStop(0.35, `rgba(${midCol[0]},${midCol[1]},${midCol[2]},${alpha * 0.85})`);
+  grad.addColorStop(0.65, `rgba(${midCol[0]},${midCol[1]},${midCol[2]},${alpha * 0.30})`);
+  grad.addColorStop(1,    `rgba(${midCol[0]},${midCol[1]},${midCol[2]},0)`);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function shiftHue(rgb, amount) {
+  // Simple hue shift via HSL
+  const r=rgb[0]/255, g=rgb[1]/255, b=rgb[2]/255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b), l=(max+min)/2;
+  if(max===min) return rgb;
+  const d=max-min, s=l>0.5?d/(2-max-min):d/(max+min);
+  let h=max===r?(g-b)/d+(g<b?6:0):max===g?(b-r)/d+2:(r-g)/d+4;
+  h=((h/6+amount)%1+1)%1;
+  const q=l<0.5?l*(1+s):l+s-l*s, p=2*l-q;
+  const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+  return [Math.round(hue2rgb(p,q,h+1/3)*255), Math.round(hue2rgb(p,q,h)*255), Math.round(hue2rgb(p,q,h-1/3)*255)];
+}
+
+function draw(now) {
+  requestAnimationFrame(draw);
+  t = now;
+
+  if (!transitioning && now - lastHold > holdDur) {
+    transitioning = true; transStart = now;
+    nextTheme = (currentTheme + 1) % themes.length;
+    lastHold = now;
+  }
+  if (transitioning) {
+    progress = Math.min((now - transStart) / transDur, 1);
+    if (progress >= 1) {
+      currentTheme = nextTheme; transitioning = false; progress = 1;
+      themeList.querySelectorAll('.theme-button').forEach((item, j) => {
+        item.classList.toggle('active', j === currentTheme);
+        item.setAttribute('aria-pressed', String(j === currentTheme));
+      });
+    }
+  }
+
+  const colA = getThemeColors(currentTheme, t);
+  const colB = getThemeColors(nextTheme, t);
+  const p = transitioning ? progress : 0;
+  const blended = colA.map((c,i) => lerpColor(c, colB[i], p));
+
+  // Base fill
+  ctx.fillStyle = `rgb(${blended[0][0]},${blended[0][1]},${blended[0][2]})`;
+  ctx.fillRect(0, 0, W, H);
+
+  const s = t * 0.001;
+  const ax = W * 0.30, ay = H * 0.26;
+
+  // Blob 1 — main
+  const dx1 = Math.sin(s*0.055+0.9)*ax*0.85 + Math.sin(s*0.028+1.7)*ax*0.42 + Math.sin(s*0.017+2.85)*ax*0.26;
+  const dy1 = Math.cos(s*0.048+0.3)*ay*0.80 + Math.sin(s*0.031+2.2)*ay*0.40 + Math.cos(s*0.020+1.45)*ay*0.30;
+  const r1  = Math.max(W,H) * (0.85 + Math.sin(s*0.13)*0.06);
+  drawBlob(W/2+dx1, H/2+dy1, r1, blended[2], blended[1], 1.0);
+
+  // Blob 2 — opposite phase, shifted hue, 55% opacity
+  const dx2 = Math.sin(s*0.041+Math.PI+1.1)*ax*0.75 + Math.cos(s*0.022+Math.PI+0.4)*ax*0.38 + Math.sin(s*0.014+Math.PI+3.1)*ax*0.22;
+  const dy2 = Math.cos(s*0.035+Math.PI+2.0)*ay*0.70 + Math.sin(s*0.019+Math.PI+0.8)*ay*0.32 + Math.cos(s*0.012+Math.PI+1.9)*ay*0.24;
+  const r2  = Math.max(W,H) * (0.70 + Math.cos(s*0.09)*0.05);
+  const center2 = shiftHue(blended[2], 0.06);
+  const mid2    = shiftHue(blended[1], 0.04);
+  drawBlob(W/2+dx2, H/2+dy2, r2, center2, mid2, 0.55);
+
+  updateClock();
+}
+
+function updateClock() {
+  const now = new Date();
+  let h = now.getHours() % 12 || 12;
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('time').textContent = `${h}:${m}`;
+  const days   = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+  const months = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+  document.getElementById('date').textContent = `${days[now.getDay()]} · ${months[now.getMonth()]} ${now.getDate()}`;
+}
+
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
