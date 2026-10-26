@@ -4,7 +4,7 @@ Aura is a macOS screen saver with an animated gradient clock and 16 color themes
 
 ![Aura screen saver](assets/aura-cover.jpg)
 
-[Explore all 16 themes in the interactive demo](https://michelleecalderon.github.io/aura-screensaver/) · [Watch the 60-second video](assets/aura-demo.mp4)
+[Explore all 16 themes in the interactive demo](https://michelleecalderon.github.io/aura-screensaver/) 
 
 ## Preview
 
