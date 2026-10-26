@@ -8,30 +8,24 @@ Aura is a macOS screen saver with an animated gradient clock. It cycles through 
 
 ## Preview
 
-| Orchid | Aqua | Dark appearance |
+| Orchid | Aqua | Blue theme |
 | --- | --- | --- |
 | ![Orchid theme](assets/preview-orchid.jpg) | ![Aqua theme](assets/preview-aqua.jpg) | ![Blue theme](assets/preview-dark-appearance.jpg) |
 
-## Install the Gumroad download
+## Get Aura for free
 
-1. Download and unzip **Aura Screensaver** from Gumroad.
-2. Double-click `aura.saver` and choose **Install for this user only**.
-3. Open **System Settings → Screen Saver** and select **Aura**.
+This repository includes the source code. To install Aura:
 
-The Gumroad build requires macOS 13 or later and runs on Apple Silicon Macs. It is not notarized, so macOS may show a security warning. Install it only if you trust the download.
-
-## Build from source
-
-1. Open `aura.xcodeproj` in Xcode on a Mac.
+1. Download the repository and open `aura.xcodeproj` in Xcode on a Mac.
 2. Select the `aura` scheme and build the `aura.saver` product.
-3. In Xcode, choose **Product → Show Build Folder in Finder** and locate `aura.saver` under `Products/Debug`.
-4. Double-click the built `aura.saver` to install it, then select **Aura** in **System Settings → Screen Saver**.
+3. Double-click the built `aura.saver` and choose **Install for this user only**.
+4. Open **System Settings → Screen Saver** and select **Aura**.
 
-The project’s current Xcode build setting targets macOS 26.2. The shared project has no developer-team setting; select your own signing team in Xcode if you want to sign your build.
+The project currently targets macOS 26.2. The build is not notarized, so macOS may show a security warning.
 
-## GitHub downloads
+## Downloads
 
-GitHub Releases do not currently include a prebuilt installer. The Gumroad download is distributed separately.
+GitHub Releases do not currently include a prebuilt installer. The free download here is the source code; build it with Xcode using the steps above.
 
 ## License
 
